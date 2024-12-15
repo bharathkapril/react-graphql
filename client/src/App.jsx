@@ -1,7 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
 import React from "react";
 
-const GET_USESR = gql`
+const GET_USER = gql`
   query GetUsers {
     getUsers {
       id
@@ -12,16 +12,46 @@ const GET_USESR = gql`
   }
 `;
 
+const GET_USER_BY_ID = gql`
+  query GetUserById($id: ID!) {
+    getUserById(id: $id) {
+      id
+      name
+      age
+      isMarried
+    }
+  }
+`;
+
 const App = () => {
-  const { data, error, loading } = useQuery(GET_USESR);
-  if (loading) return <p>Loading</p>;
-  if (error) return <p>error: {error.message}</p>;
+  const {
+    data: getUsersData,
+    error: getUsersError,
+    loading: getUsersLoading,
+  } = useQuery(GET_USER);
+  const {
+    data: getUsersByIdData,
+    error: getUsersEByIdrror,
+    loading: getUsersByIdLoading,
+  } = useQuery(GET_USER_BY_ID, { variables: { id: "2" } });
+
+  if (getUsersLoading) return <p>Loading</p>;
+  if (getUsersError) return <p>error: {getUsersError.message}</p>;
 
   return (
     <div>
+      <div>
+        {getUsersByIdLoading ? (
+          <p>Loading...</p>
+        ) : (
+          <>
+            <p>Selected User: {getUsersByIdData.getUserById.name}</p>
+          </>
+        )}
+      </div>
       <h1>Users</h1>
       <div>
-        {data.getUsers.map((user) => (
+        {getUsersData.getUsers.map((user) => (
           <h2>{user.name}</h2>
         ))}
       </div>
