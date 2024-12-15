@@ -1,5 +1,5 @@
-import { gql, useQuery } from "@apollo/client";
-import React from "react";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import React, { useState } from "react";
 
 const GET_USER = gql`
   query GetUsers {
@@ -23,23 +23,64 @@ const GET_USER_BY_ID = gql`
   }
 `;
 
+const CREATE_USER = gql`
+  mutation CreateUser($name: String!, $age: Int!, $isMarried: Boolean!) {
+    createUser(name: $name, age: $age, isMarried: $isMarried) {
+      name
+    }
+  }
+`;
+
 const App = () => {
+  const [newUser, setNewUser] = useState({});
+
   const {
     data: getUsersData,
     error: getUsersError,
     loading: getUsersLoading,
   } = useQuery(GET_USER);
+
   const {
     data: getUsersByIdData,
     error: getUsersEByIdrror,
     loading: getUsersByIdLoading,
   } = useQuery(GET_USER_BY_ID, { variables: { id: "2" } });
 
+  const [createUser] = useMutation(CREATE_USER);
+
   if (getUsersLoading) return <p>Loading</p>;
   if (getUsersError) return <p>error: {getUsersError.message}</p>;
 
+  const handleCreateUser = async () => {
+    createUser({
+      variables: {
+        name: newUser.name,
+        age: Number(newUser.age),
+        isMarried: false,
+      },
+    });
+    console.log(newUser);
+  };
+
   return (
     <div>
+      <div>
+        <input
+          type="text"
+          placeholder="Name..."
+          onChange={(e) =>
+            setNewUser((prev) => ({ ...prev, name: e.target.value }))
+          }
+        />
+        <input
+          type="number"
+          placeholder="Age..."
+          onChange={(e) =>
+            setNewUser((prev) => ({ ...prev, age: e.target.value }))
+          }
+        />
+        <button onClick={handleCreateUser}>Submit</button>
+      </div>
       <div>
         {getUsersByIdLoading ? (
           <p>Loading...</p>
