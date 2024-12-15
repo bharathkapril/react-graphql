@@ -26,27 +26,27 @@ const typeDefs = `
 `;
 
 const resolvers = {
-    Query:{
-        getUsers: () => {
-            return users
-        },
-        getUserById: (parent, args) => {
-            const {id} = args
-            return users.find(user => user.id === id)
-        }
+  Query: {
+    getUsers: () => {
+      return users;
     },
-    Mutation: {
-        createUser: (parent, args) => {
-            const {name, age, isMarried} = args;
-            const newUser = {
-                id: (users.length + 1).toString(),
-                name,
-                age,
-                isMarried
-            }
-            users.push(newUser)
-        }
-    }
+    getUserById: (parent, args) => {
+      const { id } = args;
+      return users.find((user) => user.id === id);
+    },
+  },
+  Mutation: {
+    createUser: (parent, args) => {
+      const { name, age, isMarried } = args;
+      const newUser = {
+        id: (users.length + 1).toString(),
+        name,
+        age,
+        isMarried,
+      };
+      users.push(newUser);
+    },
+  },
 };
 
 const server = new ApolloServer({ typeDefs, resolvers });
